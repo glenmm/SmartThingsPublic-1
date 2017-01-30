@@ -141,9 +141,6 @@ def directorSettings() {
 			input setHigh
 			input hot
 		}
-        section("When temperature is between the previous temperatures, change mode to..."){
-			input neutral
-		}
     }
     
 }
