@@ -17,7 +17,7 @@ definition(
     name: "Master and Slave Switches",
     namespace: "q13975",
     author: "Mike Wang",
-    description: "A master switch can turn on and off all slave switches. When all slave switches turned on or off, the master switch will turn on and off accordingly. ",
+    description: "A master switch can turn on and off all slave switches. When all slave switches are on, master will be on. When any or all slave switches are off, the master switch will be off accordingly.",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
@@ -25,11 +25,14 @@ definition(
 
 
 preferences {
-	section("Define a master switch:") {
-		input "master", "capability.switch", required: true
+	section("Define a master switch") {
+		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
-    section("Define slave switches:") {
-    	input "slaves", "capability.switch", multiple: true, required: true
+    section("Define slave switches") {
+    	input name: "slaves", type: "capability.switch", title: "Slave Switches?", multiple: true, required: true
+    }
+    section("Master switch will be off if any slaves are off") {
+    	input name: "masterOffAtAll", type: "bool", title: "or until all slaves are off if you check me", defaultValue: false
     }
 }
 
@@ -47,6 +50,11 @@ def updated() {
 }
 
 def initialize() {
+	// Initialize some variables
+	state.slaveTriggerOn = false
+	state.slaveTriggerOff = false
+
+// handlers
 	subscribe(master, "switch.on", handlerMasterOn, [filterEvents: false])
 	subscribe(master, "switch.off", handlerMasterOff, [filterEvents: false])
 	subscribe(slaves, "switch.on", handlerSlavesOn, [filterEvents: false])
@@ -55,41 +63,49 @@ def initialize() {
 
 // Handler when master switch is turned on
 def handlerMasterOn(evt) {
-	log.debug "Master switch was turned $evt.value"
-
-    def offSwitches = getSwitchesByState(slaves, "off")
-	offSwitches?.each { it ->
-    	it.on()
+	if(state.slaveTriggerOn) {
+	   	state.slaveTriggerOn = false
+    } else {
+    	def offSwitches = getSwitchesByState(slaves, "off")
+        offSwitches?.each { it ->
+        	it.on()
+        }
     }
 }
 
 // Handler when master switch is turned off
 def handlerMasterOff(evt) {
-	log.debug "Master switch was turned $evt.value"
-    
-    def onSwitches = getSwitchesByState(slaves, "on")
-    onSwitches?.each { it ->
-    	it.off()
+	if(state.slaveTriggerOff) {
+	   	state.slaveTriggerOff = false
+    } else {
+    	def onSwitches = getSwitchesByState(slaves, "on")
+        onSwitches?.each { it ->
+           	it.off()
+        }
     }
 }
 
 // Handler when slave switch is turned on
 def handlerSlavesOn(evt) {
-	log.debug "Slave swtich was turned $evt.value"
-	
     def onSwitches = getSwitchesByState(slaves, "on")
     if(onSwitches?.size() == slaves.size() && master.currentSwitch == "off") {
-    	master.on()
+    	state.slaveTriggerOn = true
+		master.on()
     }
 }
 
 // Handler when slave switch is turned off
 def handlerSlavesOff(evt) {
-	log.debug "Slave swtich was turned $evt.value"
-    
-    def offSwitches = getSwitchesByState(slaves, "off")
-	if(offSwitches?.size() == slaves.size() && master.currentSwitch == "on") {
-    	master.off()
+   	def masterOff = true
+	if(masterOffAtAll) {
+    	def offSwitches = getSwitchesByState(slaves, "off")
+        if(!(offSwitches?.size() == slaves.size())) {
+        	masterOff = false
+        }
+	}
+    if(masterOff && master.currentSwitch == "on") {
+		state.slaveTriggerOff = true
+	    master.off()
     }
 }
 
