@@ -1,6 +1,8 @@
 /**
  *  Master and Slave Switches
  *
+ *	Current Version: 1.0.0
+ *
  *  Copyright 2017 Mike Wang
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
