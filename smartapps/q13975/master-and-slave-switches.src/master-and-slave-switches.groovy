@@ -34,7 +34,7 @@ preferences {
     	input name: "slaves", type: "capability.switch", title: "Slave Switches?", multiple: true, required: true
     }
     section("Master switch will be off if any slaves are off") {
-    	input name: "masterOffAtAll", type: "bool", title: "or until all slaves are off if you check me", defaultValue: false
+    	input name: "masterOffAtAll", type: "bool", title: "or until all slaves are off if checked", defaultValue: false
     }
 }
 
