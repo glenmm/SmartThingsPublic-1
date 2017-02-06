@@ -110,7 +110,7 @@ def handlerSlavesOff(evt) {
 }
 
 // get a subset from a List of swithes by its state
-private getSwitchesByState(switches, st="on") {
+private getSwitchesByState(switches, st="off") {
 	if(switches) {
 		st = st?.toLowerCase() == "on" ? "on" : "off"
 		def result = switches.findAll { it ->
