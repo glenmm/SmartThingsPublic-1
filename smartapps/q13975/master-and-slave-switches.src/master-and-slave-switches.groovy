@@ -39,14 +39,10 @@ preferences {
 }
 
 def installed() {
-	log.debug "Installed with settings: ${settings}"
-
 	initialize()
 }
 
 def updated() {
-	log.debug "Updated with settings: ${settings}"
-
 	unsubscribe()
 	initialize()
 }
@@ -56,7 +52,7 @@ def initialize() {
 	state.slaveTriggerOn = false
 	state.slaveTriggerOff = false
 
-// handlers
+	// handlers
 	subscribe(master, "switch.on", handlerMasterOn, [filterEvents: false])
 	subscribe(master, "switch.off", handlerMasterOff, [filterEvents: false])
 	subscribe(slaves, "switch.on", handlerSlavesOn, [filterEvents: false])
