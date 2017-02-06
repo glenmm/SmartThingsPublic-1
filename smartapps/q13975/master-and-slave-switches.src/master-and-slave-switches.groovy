@@ -1,8 +1,6 @@
 /**
  *  Master and Slave Switches
  *
- *	Current Version: 1.0.0
- *
  *  Copyright 2017 Mike Wang
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -25,6 +23,8 @@ definition(
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
+def appVersion() { "1.0.0" }
+def appVerDate() { "2-6-2017" }
 
 preferences {
 	section("Define a master switch") {
