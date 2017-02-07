@@ -21,7 +21,7 @@ definition(
 	name: "Master and Slave Switches",
 	namespace: "q13975",
 	author: "Mike Wang",
-	description: "Master and slave switch(es) can work together as a set.",
+	description: "Master and slave switch(es) can work together as a set",
 	category: "Convenience",
 	iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
 	iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
