@@ -63,6 +63,7 @@ def initialize() {
 
 // Handler when master switch is turned on
 def handlerMasterOn(evt) {
+	log.debug "Device: ${evt.getDevice()}; Status: ${evt.getDevice()?.currentSwitch}"
 	if(state.slaveTriggerOn) {
 	   	state.slaveTriggerOn = false
 	} else if(evt.getDevice()?.currentSwitch == "on" && evt.isStateChange()) {
@@ -75,6 +76,7 @@ def handlerMasterOn(evt) {
 
 // Handler when master switch is turned off
 def handlerMasterOff(evt) {
+	log.debug "Device: ${evt.getDevice()}; Status: ${evt.getDevice()?.currentSwitch}"
 	if(state.slaveTriggerOff) {
 	   	state.slaveTriggerOff = false
 	} else if(evt.getDevice()?.currentSwitch == "off" && evt.isStateChange()) {
@@ -87,6 +89,7 @@ def handlerMasterOff(evt) {
 
 // Handler when slave switch is turned on
 def handlerSlavesOn(evt) {
+	log.debug "Device: ${evt.getDevice()}; Status: ${evt.getDevice()?.currentSwitch}"
 	if(evt.getDevice()?.currentSwitch == "on" && evt.isStateChange() && master.currentSwitch == "off") {
 		def onSwitches = getSwitchesByState(slaves, "on")
 		if(onSwitches?.size() == slaves.size()) {
@@ -98,6 +101,7 @@ def handlerSlavesOn(evt) {
 
 // Handler when slave switch is turned off
 def handlerSlavesOff(evt) {
+	log.debug "Device: ${evt.getDevice()}; Status: ${evt.getDevice()?.currentSwitch}"
 	if(evt.getDevice()?.currentSwitch == "off" && evt.isStateChange() && master.currentSwitch == "on") {
     		def offSwitches = getSwitchesByState(slaves, "off")
 		if(!masterOffAtAll || offSwitches?.size() == slaves.size()) {
