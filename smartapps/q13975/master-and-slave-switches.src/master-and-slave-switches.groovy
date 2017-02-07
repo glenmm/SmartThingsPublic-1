@@ -63,34 +63,25 @@ def initialize() {
 
 // Handler when master switch is turned on
 def handlerMasterOn(evt) {
-	log.debug "Device: ${evt.getDevice()}; Status: ${evt.getDevice()?.currentSwitch}"
 	if(state.slaveTriggerOn) {
 	   	state.slaveTriggerOn = false
-	} else if(evt.getDevice()?.currentSwitch == "on" && evt.isStateChange()) {
-		def offSwitches = getSwitchesByState(slaves, "off")
-		offSwitches?.each { it ->
-			it.on()
-		}
+	} else if(master.currentSwitch == "on" && evt.isStateChange()) {
+		slaves.on()
 	}
 }
 
 // Handler when master switch is turned off
 def handlerMasterOff(evt) {
-	log.debug "Device: ${evt.getDevice()}; Status: ${evt.getDevice()?.currentSwitch}"
 	if(state.slaveTriggerOff) {
 	   	state.slaveTriggerOff = false
-	} else if(evt.getDevice()?.currentSwitch == "off" && evt.isStateChange()) {
-		def onSwitches = getSwitchesByState(slaves, "on")
-		onSwitches?.each { it ->
-			it.off()
-		}
+	} else if(master.currentSwitch == "off" && evt.isStateChange()) {
+		slaves.off()
 	}
 }
 
 // Handler when slave switch is turned on
 def handlerSlavesOn(evt) {
-	log.debug "Device: ${evt.getDevice()}; Status: ${evt.getDevice()?.currentSwitch}"
-	if(evt.getDevice()?.currentSwitch == "on" && evt.isStateChange() && master.currentSwitch == "off") {
+	if(master.currentSwitch == "off" && evt.getDevice()?.currentSwitch == "on" && evt.isStateChange()) {
 		def onSwitches = getSwitchesByState(slaves, "on")
 		if(onSwitches?.size() == slaves.size()) {
 			state.slaveTriggerOn = true
@@ -101,8 +92,7 @@ def handlerSlavesOn(evt) {
 
 // Handler when slave switch is turned off
 def handlerSlavesOff(evt) {
-	log.debug "Device: ${evt.getDevice()}; Status: ${evt.getDevice()?.currentSwitch}"
-	if(evt.getDevice()?.currentSwitch == "off" && evt.isStateChange() && master.currentSwitch == "on") {
+	if(master.currentSwitch == "on" && evt.getDevice()?.currentSwitch == "off" && evt.isStateChange()) {
     		def offSwitches = getSwitchesByState(slaves, "off")
 		if(!masterOffAtAll || offSwitches?.size() == slaves.size()) {
 			state.slaveTriggerOff = true
