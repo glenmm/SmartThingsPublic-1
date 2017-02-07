@@ -100,11 +100,10 @@ def handlerSlavesOn(evt) {
 def handlerSlavesOff(evt) {
 	if(evt.isStateChange() && master.currentSwitch == "on") {
     		def offSwitches = getSwitchesByState(slaves, "off")
-		if(masterOffAtAll && !(offSwitches?.size() == slaves.size())) {
-			return
+		if(!masterOffAtAll || offSwitches?.size() == slaves.size()) {
+			state.slaveTriggerOff = true
+			master.off()
 		}
-		state.slaveTriggerOff = true
-		master.off()
 	}
 }
 
