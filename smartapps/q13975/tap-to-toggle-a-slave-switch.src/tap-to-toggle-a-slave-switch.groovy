@@ -51,9 +51,9 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	def recentEvents = master.eventsBetween(new Date(evt.date.getTime() - 5000), evt.date, [all:true, max:10])?.findAll{it.name == "switch"}
+	def recentEvents = master.eventsBetween(new Date(evt.date.getTime() - 5000), new Date(), [all:true, max:10])?.findAll{!it.getDate.after(evt.date)}
 	if(evt.isPhysical() && recentEvents?.size() > 1 && recentEvents[0].value == recentEvents[1].value) {
-		if(slave.currentSwitch == "on") {
+		if(evt.value == "off") {
 			slave.off()
 		} else {
 			slave.on()
