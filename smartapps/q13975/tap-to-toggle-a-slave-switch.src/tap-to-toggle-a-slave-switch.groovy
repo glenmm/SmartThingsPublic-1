@@ -15,7 +15,7 @@
  */
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-7-2017" }
+def appVerDate() { "2-8-2017" }
 
 definition(
 	name: "Tap to toggle a slave switch",
@@ -52,13 +52,13 @@ def initialize() {
 
 def switchHandler(evt) {
 	def recentEvents = master.events([all:true, max:20])?.findAll { 
-    	it.physical && it.name == "switch" && (it.value == "on" || it.value == "off") 
-    }
-    if(recentEvents?.size() > 1 && recentEvents[0].value == recentEvents[1].value) {
-    	if(recentEvents[0].value == "on") {
-        	slave.on()
-        } else {
-        	slave.off()
-        }
-    }
+		it.name == "switch" && (it.value == "on" || it.value == "off")
+	}
+	if(recentEvents?.size() > 1 && recentEvents[0].value == recentEvents[1].value) {
+		if(slave.currentSwitch == "on") {
+			slave.off()
+		} else {
+			slave.on()
+		}
+	}
 }
