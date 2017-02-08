@@ -47,12 +47,13 @@ def updated() {
 }
 
 def initialize() {
-	subscribe(master, "capability.switch", switchHandler, [filterEvents: false])
+	subscribe(master, "switch.on", switchHandler, [filterEvents: false])
+    subscribe(master, "switch.off", switchHandler, [filterEvents: false])
 }
 
 def switchHandler(evt) {
-	log.debug "${evt.value}:${evt.isPhysical()}:${evt.isStateChange()}"
-	if(evt.isPhysical() && !evt.isStateChange()) {
+    def previousEvents = master.events(max:3)
+	if(previousEvents.size() > 1 && previousEvents[0].value == previousEvents[1].value) {
 		if(slave.currentSwitch == "on") {
 			slave.off()
 		} else {
