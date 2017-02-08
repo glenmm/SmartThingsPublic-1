@@ -51,6 +51,7 @@ def initialize() {
 }
 
 def switchHandler(evt) {
+	log.debug "${evt.value}:${evt.isPhysical()}:${evt.isStateChange()}"
 	if(evt.isPhysical() && !evt.isStateChange()) {
 		if(slave.currentSwitch == "on") {
 			slave.off()
