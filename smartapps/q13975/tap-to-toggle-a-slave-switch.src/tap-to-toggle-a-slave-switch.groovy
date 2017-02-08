@@ -51,12 +51,12 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	def previousEvents = master.events(max:3)
-	if(previousEvents.size() > 1 && previousEvents[0].value == previousEvents[1].value) {
-		if(slave.currentSwitch == "on") {
-			slave.off()
-		} else {
+	def recentEvents = master.eventsBetween(new Date(evt.date.getTime() - 5000), evt.date)?.findAll{it.name == "switch"}
+	if(recentEvents?.size() > 1 && recentEvents[0].value == recentEvents[1].value) {
+		if(evt.value == "on") {
 			slave.on()
+		} else {
+			slave.off()
 		}
 	}
 }
