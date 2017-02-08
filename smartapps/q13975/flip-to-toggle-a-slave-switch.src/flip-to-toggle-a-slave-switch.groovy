@@ -18,10 +18,10 @@ def appVersion() { "1.0.0" }
 def appVerDate() { "2-8-2017" }
 
 definition(
-	name: "Tap to toggle a slave switch",
+	name: "Flip to toggle a slave switch",
 	namespace: "q13975",
 	author: "Mike Wang",
-	description: "Double clicking the master switch will toggle the slave switch",
+	description: "Flip the master switch quickly will toggle the slave switch",
 	category: "Convenience",
 	iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
 	iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
@@ -29,11 +29,14 @@ definition(
 )
 
 preferences {
-	section("Define a master switch") {
+	section("Flip this switch") {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
-	section("Define a slave switch") {
+	section("to toggle this switch") {
 		input name: "slave", type: "capability.switch", title: "Slave Switch?", required: true
+	}
+	section("within certain time") {
+		input name: "tm", type: "number", title: "in seconds?", required: true, default: 3
 	}
 }
 
@@ -51,14 +54,16 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	def recentEvents = master.events([all:true, max:20])?.findAll { 
-		it.name == "switch" && (it.value == "on" || it.value == "off")
-	}
-	if(recentEvents?.size() > 1 && recentEvents[0].value == recentEvents[1].value) {
-		if(slave.currentSwitch == "on") {
-			slave.off()
+	if(evt.name == "switch" && (evt.value == "on" || evt.value == "off")) {
+		if(state.lastAction?.state == evt.value && state.lastAction?.time > now()) 
+			if(slave.currentSwitch == "on") {
+				slave.off()
+			} else {
+				slave.on()
+			}
+			state.lastAction = [state:evt.value, time:now()]
 		} else {
-			slave.on()
+			state.lastAction = [state:evt.value, time:(now() + tm * 1000)]
 		}
 	}
 }
