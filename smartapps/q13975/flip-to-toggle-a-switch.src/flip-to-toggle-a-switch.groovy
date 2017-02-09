@@ -53,12 +53,14 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	if(evt.isPhysical()) {
-		if(state.nextTime > now()) {
+	eventTime = evt.date.getTime()
+	log.debug "eventTime: ${eventTime}"
+	if(evt.isStateChange()) {
+		if(state.nextTime > eventTime) {
 			toggleSwitch(slave)
 			state.nextTime = 0
 		} else {
-			state.nextTime = now() + tm * 1000
+			state.nextTime = eventTime + tm * 1000
 		}
 	}
 }
