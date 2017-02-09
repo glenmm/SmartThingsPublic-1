@@ -53,7 +53,7 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	log "now: ${now()}"
+	log.debug "now: ${now()}"
 	if(evt.isStateChange() && state.nextTime? > now()) {
 		if(slave.currentSwitch == "on") {
 			slave.off()
