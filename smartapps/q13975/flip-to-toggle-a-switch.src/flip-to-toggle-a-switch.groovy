@@ -40,6 +40,7 @@ preferences {
 }
 
 def installed() {
+	state.nextTime = 0
 	initialize()
 }
 
@@ -53,14 +54,16 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	if(evt.isStateChange() && state.nextTime && state.nextTime > now()) {
-		if(slave.currentSwitch == "on") {
-			slave.off()
+	if(evt.isStateChange()) {
+		if(state.nextTime > now() {
+			if(slave.currentSwitch == "on") {
+				slave.off()
+			} else {
+				slave.on()
+			}
+			state.nextTime = 0
 		} else {
-			slave.on()
+			state.nextTime = now() + tm * 1000
 		}
-		state.nextTime = now()
-	} else {
-		state.nextTime = now() + tm * 1000
 	}
 }
