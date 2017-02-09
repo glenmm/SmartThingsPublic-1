@@ -50,9 +50,10 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	if(evt.isPhysical() && !evt.isStateChange() && state.nextTime < now()) {
+	def eventTime = evt.date.getTime()
+	if(evt.isPhysical() && !evt.isStateChange() && state.nextTime < eventTime) {
 		toggleSwitch(slave)
-		state.nextTime = now() + 1000	// time fence to avoid double trigger
+		state.nextTime = eventTime + 1000	// time fence to avoid double trigger
 	}
 }
 
