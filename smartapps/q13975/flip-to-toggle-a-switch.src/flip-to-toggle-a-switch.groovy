@@ -24,7 +24,7 @@ definition(
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-8-2017" }
+def appVerDate() { "2-9-2017" }
 
 preferences {
 	section("Flip this switch") {
@@ -54,7 +54,7 @@ def initialize() {
 
 def switchHandler(evt) {
 	def eventTime = evt.date.getTime()
-	if(evt.isPhysical() && evt.isStateChange()) {
+	if(evt.value == "on" || evt.value == "off") {
 		if(state.nextTime > eventTime) {
 			toggleSwitch(slave)
 			state.nextTime = 0
