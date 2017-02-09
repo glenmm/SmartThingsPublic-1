@@ -23,28 +23,57 @@ definition(
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
+def appVersion() { "1.0.0" }
+def appVerDate() { "2-8-2017" }
 
 preferences {
-	section("Title") {
-		// TODO: put inputs here
+	section("Flip this switch") {
+		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
+	}
+	section("to toggle this switch") {
+		input name: "slave", type: "capability.switch", title: "Slave Switch?", required: true
+	}
+	section("within certain time") {
+		input name: "tm", type: "number", title: "in seconds?", required: true, defaultValue: 3
 	}
 }
 
 def installed() {
-	log.debug "Installed with settings: ${settings}"
-
 	initialize()
 }
 
 def updated() {
-	log.debug "Updated with settings: ${settings}"
-
 	unsubscribe()
 	initialize()
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
+	state.nextTime = 0
+	subscribe(master, "switch", switchHandler, [filterEvents: false])
 }
 
-// TODO: implement event handlers
+def switchHandler(evt) {
+	log.debug "event? ${evt.name}, ${evt.value}, ${evt.isPhysical()}, ${evt.isStateChange()}, ${evt.data}"
+    if(evt.isPhysical() && !evt.isStateChange() && state.nextTime < now()) {
+    	toggleSwitch(slave)
+        state.nextTime = now() + 1000
+    }
+//	if(evt.isPhysical()) {
+//		if(state.nextTime > now()) {
+//			toggleSwitch(slave)
+//			state.nextTime = 0
+//		} else {
+//			state.nextTime = now() + tm * 1000
+//		}
+//	}
+}
+
+private toggleSwitch(sw) {
+	if(sw) {
+		if(sw.currentSwitch == "on") {
+			sw.off()
+		} else {
+			sw.on()
+		}
+	}
+}
