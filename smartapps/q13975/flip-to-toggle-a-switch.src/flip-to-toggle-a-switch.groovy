@@ -53,7 +53,6 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	log.debug "event: ${evt.name}, ${evt.value}, ${evt.isPhysical()}, ${evt.isStateChange()}"
 	if(evt.isPhysical()) {
 		if(state.nextTime > now()) {
 			toggleSwitch(slave)
