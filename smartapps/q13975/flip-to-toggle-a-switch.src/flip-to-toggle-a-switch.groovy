@@ -53,8 +53,8 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	def eventTime = evt.date.getTime()
-	if(evt.value == "on" || evt.value == "off") {
+	if(evt.isPhysical() && evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
+		def eventTime = evt.date.getTime()
 		if(state.nextTime > eventTime) {
 			toggleSwitch(slave)
 			state.nextTime = 0
