@@ -14,9 +14,6 @@
  *
  */
 
-def appVersion() { "1.0.0" }
-def appVerDate() { "2-6-2017" }
-
 definition(
 	name: "Master and Slave Switches",
 	namespace: "q13975",
@@ -27,6 +24,9 @@ definition(
 	iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
 	iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
 )
+
+def appVersion() { "1.0.0" }
+def appVerDate() { "2-6-2017" }
 
 preferences {
 	section("Define a master switch") {

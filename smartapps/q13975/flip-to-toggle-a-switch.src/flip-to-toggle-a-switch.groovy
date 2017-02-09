@@ -21,30 +21,48 @@ definition(
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
-    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
+    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
+)
 
+def appVersion() { "1.0.0" }
+def appVerDate() { "2-8-2017" }
 
 preferences {
-	section("Title") {
-		// TODO: put inputs here
+	section("Flip this switch") {
+		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
+	}
+	section("to toggle this switch") {
+		input name: "slave", type: "capability.switch", title: "Slave Switch?", required: true
+	}
+	section("within certain time") {
+		input name: "tm", type: "number", title: "in seconds?", required: true, default: 3
 	}
 }
 
 def installed() {
-	log.debug "Installed with settings: ${settings}"
-
 	initialize()
 }
 
 def updated() {
-	log.debug "Updated with settings: ${settings}"
-
 	unsubscribe()
 	initialize()
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
+	subscribe(master, "switch", switchHandler, [filterEvents: false])
 }
 
-// TODO: implement event handlers
+def switchHandler(evt) {
+	if(evt.name == "switch" && (evt.value == "on" || evt.value == "off")) {
+		if(state.lastAction?.state == evt.value && state.lastAction?.time > now()) 
+			if(slave.currentSwitch == "on") {
+				slave.off()
+			} else {
+				slave.on()
+			}
+			state.lastAction = [state:evt.value, time:now()]
+		} else {
+			state.lastAction = [state:evt.value, time:(now() + tm * 1000)]
+		}
+	}
+}
