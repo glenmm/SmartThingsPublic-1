@@ -35,7 +35,7 @@ preferences {
 		input name: "slave", type: "capability.switch", title: "Slave Switch?", required: true
 	}
 	section("within certain time") {
-		input name: "tm", type: "number", title: "in seconds?", required: true, default: 3
+		input name: "tm", type: "number", title: "in seconds?", required: true, defaultValue: 3
 	}
 }
 
