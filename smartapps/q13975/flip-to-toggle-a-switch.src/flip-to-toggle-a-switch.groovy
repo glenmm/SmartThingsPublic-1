@@ -54,7 +54,7 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	if(evt.isStateChange()) {
+	if(evt.isPhysical() && evt.isStateChange()) {
 		if(state.nextTime > now()) {
 			if(slave.currentSwitch == "on") {
 				slave.off()
