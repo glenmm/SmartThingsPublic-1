@@ -40,7 +40,6 @@ preferences {
 }
 
 def installed() {
-	state.nextTime = 0
 	initialize()
 }
 
@@ -50,6 +49,7 @@ def updated() {
 }
 
 def initialize() {
+	state.nextTime = 0
 	subscribe(master, "switch", switchHandler, [filterEvents: false])
 }
 
