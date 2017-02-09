@@ -53,16 +53,15 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	if(evt.name == "switch" && (evt.value == "on" || evt.value == "off")) {
-		if(state.lastAction?.state == evt.value && state.lastAction?.time > now()) {
-			if(slave.currentSwitch == "on") {
-				slave.off()
-			} else {
-				slave.on()
-			}
-			state.lastAction = [state:evt.value, time:now()]
+	log "now: ${now()}"
+	if(evt.isStateChange() && state.nextTime? > now()) {
+		if(slave.currentSwitch == "on") {
+			slave.off()
 		} else {
-			state.lastAction = [state:evt.value, time:(now() + tm * 1000)]
+			slave.on()
 		}
+		state.nextTime = now()
+	} else {
+		state.nextTime = now() + tm * 1000
 	}
 }
