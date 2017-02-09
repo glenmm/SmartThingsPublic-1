@@ -33,9 +33,6 @@ preferences {
 	section("to toggle this switch") {
 		input name: "slave", type: "capability.switch", title: "Slave Switch?", required: true
 	}
-	section("within certain time") {
-		input name: "tm", type: "number", title: "in seconds?", required: true, defaultValue: 3
-	}
 }
 
 def installed() {
@@ -56,7 +53,7 @@ def switchHandler(evt) {
 	currentTime = now()
 	if(evt.isPhysical() && !evt.isStateChange() && state.nextTime < currentTime) {
 		toggleSwitch(slave)
-		state.nextTime = currentTime + 200	// time fence to avoid double trigger
+		state.nextTime = currentTime + 500	// time fence to avoid double trigger
 	}
 }
 
