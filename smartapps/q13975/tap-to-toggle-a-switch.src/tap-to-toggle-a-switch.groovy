@@ -17,7 +17,7 @@ definition(
     name: "tap to toggle a switch",
     namespace: "q13975",
     author: "Mike Wang",
-    description: "Double tap a switch will toggle another switch",
+    description: "Double tap a switch to toggle another switch",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
