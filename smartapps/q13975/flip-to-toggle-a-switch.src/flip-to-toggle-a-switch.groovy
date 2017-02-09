@@ -54,16 +54,23 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	if(evt.isPhysical() && evt.isStateChange()) {
+	// if(evt.isPhysical() && evt.isStateChange()) {
+	if(evt.isStateChange()) {
 		if(state.nextTime > now()) {
-			if(slave.currentSwitch == "on") {
-				slave.off()
-			} else {
-				slave.on()
-			}
+			toggleSwitch(slave)
 			state.nextTime = 0
 		} else {
 			state.nextTime = now() + tm * 1000
+		}
+	}
+}
+
+private toggleSwitch(sw) {
+	if(sw) {
+		if(sw.currentSwitch == "on") {
+			sw.off()
+		} else {
+			sw.on()
 		}
 	}
 }
