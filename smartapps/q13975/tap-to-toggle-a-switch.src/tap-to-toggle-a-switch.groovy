@@ -50,18 +50,14 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	if(evt.isPhysical() && (evt.value == "on" || evt.value == "off")) {
-		if(evt.isStateChange()) {
+	if(evt.isPhysical() && !evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
+		def eventTime = evt.date.getTime()
+		if(state.nextTime < eventTime) {	// first tap
+			// set time fence for second tap
+			state.nextTime = eventTime + 5000
+		} else {				// second tap
+			toggleSwitch(slave)
 			state.nextTime = 0	
-		} else {
-			def eventTime = evt.date.getTime()
-			if(state.nextTime < eventTime) {	// first tap
-				// set time fence for second tap
-				state.nextTime = eventTime + 3000
-			} else {				// second tap
-				toggleSwitch(slave)
-				state.nextTime = 0	
-			}
 		}
 	}
 }
