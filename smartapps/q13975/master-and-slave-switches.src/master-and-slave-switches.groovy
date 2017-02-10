@@ -51,6 +51,8 @@ def updated() {
 
 def initialize() {
 	// Initialize some variables
+	state.masterTriggerOn = false
+	state.masterTriggerOff = false
 	state.slaveTriggerOn = false
 	state.slaveTriggerOff = false
 
@@ -66,6 +68,7 @@ def handlerMasterOn(evt) {
 	if(state.slaveTriggerOn) {
 	   	state.slaveTriggerOn = false
 	} else if(evt.isStateChange()){
+		state.masterTriggerOn = true
 		slaves.on()
 	}
 }
@@ -75,13 +78,14 @@ def handlerMasterOff(evt) {
 	if(state.slaveTriggerOff) {
 	   	state.slaveTriggerOff = false
 	} else if(evt.isStateChange()){
+		state.masterTriggerOff = true
 		slaves.off()
 	}
 }
 
 // Handler when slave switch is turned on
 def handlerSlavesOn(evt) {
-	if(evt.isStateChange()) {
+	if(!state.masterTriggerOn && evt.isStateChange()) {
 		def onSwitches = getSwitchesByState(slaves, "on")
 		if(onSwitches?.size() == slaves.size()) {
 			state.slaveTriggerOn = true
@@ -92,7 +96,7 @@ def handlerSlavesOn(evt) {
 
 // Handler when slave switch is turned off
 def handlerSlavesOff(evt) {
-	if(evt.isStateChange()) {
+	if(!state.masterTriggerOff && evt.isStateChange()) {
 		def offSwitches = getSwitchesByState(slaves, "off")
 		if(!masterOffAtAll || offSwitches?.size() == slaves.size()) {
 			state.slaveTriggerOff = true
