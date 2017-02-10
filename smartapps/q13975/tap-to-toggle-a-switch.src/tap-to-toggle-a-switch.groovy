@@ -52,9 +52,7 @@ def initialize() {
 def switchHandler(evt) {
 	if(evt.isPhysical() && (evt.value == "on" || evt.value == "off")) {
 		if(evt.isStateChange()) {
-			if(state.nextTime) {
-				state.nextTime = 0	
-			}
+			state.nextTime = 0	
 		} else {
 			def eventTime = evt.date.getTime()
 			if(state.nextTime < eventTime) {	// first tap
