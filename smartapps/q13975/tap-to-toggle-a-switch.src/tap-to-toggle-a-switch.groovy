@@ -14,7 +14,7 @@
  *
  */
 definition(
-    name: "tap to toggle a switch",
+    name: "Tap to toggle a switch",
     namespace: "q13975",
     author: "Mike Wang",
     description: "Double tap a switch to toggle another switch",
@@ -27,7 +27,7 @@ def appVersion() { "1.0.0" }
 def appVerDate() { "2-9-2017" }
 
 preferences {
-	section("Flip this switch") {
+	section("Double Tap this switch") {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
 	section("to toggle this switch") {
@@ -51,11 +51,7 @@ def initialize() {
 
 def switchHandler(evt) {
 	if(evt.isPhysical() && (evt.value == "on" || evt.value == "off")) {
-		if(evt.isStateChange()) {
-			if(state.nextTime) {
-				state.nextTime = 0	
-			}
-		} else {
+		if(!evt.isStateChange()) {
 			def eventTime = evt.date.getTime()
 			if(state.nextTime < eventTime) {	// first tap
 				// set time fence for second tap
@@ -64,6 +60,8 @@ def switchHandler(evt) {
 				toggleSwitch(slave)
 				state.nextTime = 0	
 			}
+		} else if(state.nextTime) {
+			state.nextTime = 0	
 		}
 	}
 }
