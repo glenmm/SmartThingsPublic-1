@@ -24,17 +24,15 @@ definition(
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-10-2017" }
+def appVerDate() { "2-9-2017" }
 
 preferences {
 	section("Double Tap this switch") {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
-	section("to toggle other switches") {
-		input name: "slaves", type: "capability.switch", title: "Slave Switches?", required: true, multiple: true
+	section("to toggle this switch") {
+		input name: "slave", type: "capability.switch", title: "Slave Switch?", required: true
 	}
-	section("by default, it will toggle the majority switches") {
-		input name: "tmode", type: "bool", title: "Or it will toggle every switch if checked", required: true, defaultValue: false
 }
 
 def installed() {
@@ -59,7 +57,7 @@ def switchHandler(evt) {
 				// set time fence for second tap
 				state.nextTime = eventTime + 5000
 			} else {				// second tap
-				toggleSwitches(tmode)
+				toggleSwitch(slave)
 				state.nextTime = 0	
 			}
 		} else if(state.nextTime) {
@@ -68,22 +66,12 @@ def switchHandler(evt) {
 	}
 }
 
-private toggleSwitches(tm) {
-	def onSwitches = []
-	def offSwitches = []
-	slaves?.each {	
-		if(it.currentSwitch == "on") {
-			onSwitches << it
+private toggleSwitch(sw) {
+	if(sw) {
+		if(sw.currentSwitch == "on") {
+			sw.off()
 		} else {
-			offSwitches << it
+			sw.on()
 		}
 	}
-	if(tm) {
-		onSwitches.off
-		offSwitches.on
-	} else if(onSwitches?.size() >= offSwitches?.size()) {
-		onSwitches.off
-	} else {
-		offSwitches.on
-	}	
 }
