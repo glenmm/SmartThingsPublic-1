@@ -38,6 +38,7 @@ preferences {
 	}
 	section("by default, it will toggle the majority switches") {
 		input name: "tmode", type: "bool", title: "Or it will toggle every switch if checked", required: true, defaultValue: false
+    }
 }
 
 def installed() {
@@ -55,7 +56,7 @@ def initialize() {
 }
 
 def switchHandler(evt) {
-	if(evt.isPhysical() && evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
+	if(evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
 		def eventTime = evt.date.getTime()
 		if(state.nextTime > eventTime) {
 			toggleSwitches(tmode)
@@ -76,12 +77,12 @@ private toggleSwitches(tm) {
 			offSwitches << it
 		}
 	}
-	if(tm) {
-		onSwitches.off
-		offSwitches.on
-	} else if(onSwitches?.size() >= offSwitches?.size()) {
-		onSwitches.off
+    if(tm) {
+		onSwitches?.each { it.off() }
+		offSwitches?.each { it.on() }
+    } else if(onSwitches?.size() >= offSwitches?.size()) {
+		onSwitches?.each { it.off() }
 	} else {
-		offSwitches.on
-	}	
+		offSwitches?.each { it.on() }
+    }	
 }
