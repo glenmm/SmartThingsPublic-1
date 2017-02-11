@@ -34,7 +34,7 @@ preferences {
 		input name: "slaves", type: "capability.switch", title: "Slave Switch?", required: true, multiple: true
 	}
 	section("within certain time") {
-		input name: "tm", type: "number", title: "in seconds?", required: true, defaultValue: 3
+		input name: "tm", type: "number", title: "in seconds?", required: true, defaultValue: 5
 	}
 	section("by default, it will toggle the majority switches") {
 		input name: "tmode", type: "bool", title: "Or it will toggle every switch if checked", required: true, defaultValue: false
@@ -77,12 +77,12 @@ private toggleSwitches(tm) {
 			offSwitches << it
 		}
 	}
-    if(tm) {
+	if(tm) {
 		onSwitches?.each { it.off() }
 		offSwitches?.each { it.on() }
-    } else if(onSwitches?.size() >= offSwitches?.size()) {
+	} else if(onSwitches?.size() >= offSwitches?.size()) {
 		onSwitches?.each { it.off() }
 	} else {
 		offSwitches?.each { it.on() }
-    }	
+	}	
 }
