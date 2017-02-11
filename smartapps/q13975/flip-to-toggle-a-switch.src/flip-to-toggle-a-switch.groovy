@@ -24,7 +24,7 @@ definition(
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-9-2017" }
+def appVerDate() { "2-10-2017" }
 
 preferences {
 	section("Flip this switch") {
@@ -36,6 +36,8 @@ preferences {
 	section("within certain time") {
 		input name: "tm", type: "number", title: "in seconds?", required: true, defaultValue: 3
 	}
+	section("by default, it will toggle the majority switches") {
+		input name: "tmode", type: "bool", title: "Or it will toggle every switch if checked", required: true, defaultValue: false
 }
 
 def installed() {
@@ -56,9 +58,7 @@ def switchHandler(evt) {
 	if(evt.isPhysical() && evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
 		def eventTime = evt.date.getTime()
 		if(state.nextTime > eventTime) {
-			slaves?.each {
-				toggleSwitch(it)
-			}
+			toggleSwitches(tmode)
 			state.nextTime = 0
 		} else {
 			state.nextTime = eventTime + tm * 1000
@@ -66,12 +66,22 @@ def switchHandler(evt) {
 	}
 }
 
-private toggleSwitch(sw) {
-	if(sw) {
-		if(sw.currentSwitch == "on") {
-			sw.off()
+private toggleSwitches(tm) {
+	def onSwitches = []
+	def offSwitches = []
+	slaves?.each {	
+		if(it.currentSwitch == "on") {
+			onSwitches << it
 		} else {
-			sw.on()
+			offSwitches << it
 		}
 	}
+	if(tm) {
+		onSwitches.off
+		offSwitches.on
+	} else if(onSwitches?.size() >= offSwitches?.size()) {
+		onSwitches.off
+	} else {
+		offSwitches.on
+	}	
 }

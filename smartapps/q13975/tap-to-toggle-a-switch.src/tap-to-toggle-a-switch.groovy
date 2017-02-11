@@ -33,6 +33,8 @@ preferences {
 	section("to toggle other switches") {
 		input name: "slaves", type: "capability.switch", title: "Slave Switches?", required: true, multiple: true
 	}
+	section("by default, it will toggle the majority switches") {
+		input name: "tmode", type: "bool", title: "Or it will toggle every switch if checked", required: true, defaultValue: false
 }
 
 def installed() {
@@ -57,9 +59,7 @@ def switchHandler(evt) {
 				// set time fence for second tap
 				state.nextTime = eventTime + 5000
 			} else {				// second tap
-				slaves?.each {
-					toggleSwitch(it)
-				}
+				toggleSwitches(tmode)
 				state.nextTime = 0	
 			}
 		} else if(state.nextTime) {
@@ -68,12 +68,22 @@ def switchHandler(evt) {
 	}
 }
 
-private toggleSwitch(sw) {
-	if(sw) {
-		if(sw.currentSwitch == "on") {
-			sw.off()
+private toggleSwitches(tm) {
+	def onSwitches = []
+	def offSwitches = []
+	slaves?.each {	
+		if(it.currentSwitch == "on") {
+			onSwitches << it
 		} else {
-			sw.on()
+			offSwitches << it
 		}
 	}
+	if(tm) {
+		onSwitches.off
+		offSwitches.on
+	} else if(onSwitches?.size() >= offSwitches?.size()) {
+		onSwitches.off
+	} else {
+		offSwitches.on
+	}	
 }
