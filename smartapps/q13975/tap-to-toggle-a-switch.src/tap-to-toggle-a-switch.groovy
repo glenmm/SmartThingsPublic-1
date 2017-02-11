@@ -24,14 +24,14 @@ definition(
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-9-2017" }
+def appVerDate() { "2-10-2017" }
 
 preferences {
 	section("Double Tap this switch") {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
-	section("to toggle this switch") {
-		input name: "slave", type: "capability.switch", title: "Slave Switch?", required: true
+	section("to toggle other switches") {
+		input name: "slaves", type: "capability.switch", title: "Slave Switches?", required: true
 	}
 }
 
@@ -57,7 +57,9 @@ def switchHandler(evt) {
 				// set time fence for second tap
 				state.nextTime = eventTime + 5000
 			} else {				// second tap
-				toggleSwitch(slave)
+				slaves?.each {
+					toggleSwitch(it)
+				}
 				state.nextTime = 0	
 			}
 		} else if(state.nextTime) {
