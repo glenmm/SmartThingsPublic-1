@@ -1,5 +1,5 @@
 /**
- *  tap to toggle a switch
+ *  tap to toggle switches
  *
  *  Copyright 2017 Mike Wang
  *
@@ -14,24 +14,27 @@
  *
  */
 definition(
-    name: "Tap to toggle a switch",
+    name: "Tap to toggle switches",
     namespace: "q13975",
     author: "Mike Wang",
-    description: "Double tap a switch to toggle another switch",
+    description: "Double tap a switch to toggle other switches",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-9-2017" }
+def appVerDate() { "2-10-2017" }
 
 preferences {
 	section("Double Tap this switch") {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
-	section("to toggle this switch") {
-		input name: "slave", type: "capability.switch", title: "Slave Switch?", required: true
+	section("to toggle switches") {
+		input name: "slaves", type: "capability.switch", title: "Slave Switch?", required: true, multiple: true
+	}
+	section("It will toggle the majority switches if some are on or off") {
+		input name: "tmode", type: "bool", title: "Or it will toggle every switch if checked", required: true, defaultValue: false
 	}
 }
 
@@ -57,7 +60,7 @@ def switchHandler(evt) {
 				// set time fence for second tap
 				state.nextTime = eventTime + 5000
 			} else {				// second tap
-				toggleSwitch(slave)
+				toggleSwitches(tmode)
 				state.nextTime = 0	
 			}
 		} else if(state.nextTime) {
@@ -66,12 +69,22 @@ def switchHandler(evt) {
 	}
 }
 
-private toggleSwitch(sw) {
-	if(sw) {
-		if(sw.currentSwitch == "on") {
-			sw.off()
+private toggleSwitches(tm) {
+	def onSwitches = []
+	def offSwitches = []
+	slaves?.each {	
+		if(it.currentSwitch == "on") {
+			onSwitches << it
 		} else {
-			sw.on()
+			offSwitches << it
 		}
 	}
+	if(tm) {
+		onSwitches?.each { it.off() }
+		offSwitches?.each { it.on() }
+	} else if(onSwitches?.size() >= offSwitches?.size()) {
+		onSwitches?.each { it.off() }
+	} else {
+		offSwitches?.each { it.on() }
+	}	
 }
