@@ -31,7 +31,7 @@ preferences {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
 	section("to toggle other switches") {
-		input name: "slaves", type: "capability.switch", title: "Slave Switches?", required: true
+		input name: "slaves", type: "capability.switch", title: "Slave Switches?", required: true, multiple: true
 	}
 }
 

@@ -31,7 +31,7 @@ preferences {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
 	section("to toggle this switch") {
-		input name: "slave", type: "capability.switch", title: "Slave Switch?", required: true
+		input name: "slaves", type: "capability.switch", title: "Slave Switch?", required: true, multiple: true
 	}
 	section("within certain time") {
 		input name: "tm", type: "number", title: "in seconds?", required: true, defaultValue: 3
@@ -56,7 +56,9 @@ def switchHandler(evt) {
 	if(evt.isPhysical() && evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
 		def eventTime = evt.date.getTime()
 		if(state.nextTime > eventTime) {
-			toggleSwitch(slave)
+			slaves?.each {
+				toggleSwitch(it)
+			}
 			state.nextTime = 0
 		} else {
 			state.nextTime = eventTime + tm * 1000
