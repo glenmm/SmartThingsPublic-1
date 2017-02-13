@@ -17,34 +17,44 @@ definition(
     name: "Switch Managed Presence",
     namespace: "q13975",
     author: "Mike Wang",
-    description: "Switch managed presence",
+    description: "Use a switch to manage a presence",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
-    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
+    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
+)
 
+def appVersion() { "1.0.0" }
+def appVerDate() { "2-9-2017" }
 
 preferences {
-	section("Title") {
-		// TODO: put inputs here
+	section("Use this switch") {
+		input name: "myswitch", type: "capability.switch", title: "Select a switch?", required: true
+	}
+	section("to manage this presence") {
+		input name: "mypresence", type: "capability.presenceSensor", title: "Select a presence?", required: true
 	}
 }
 
 def installed() {
-	log.debug "Installed with settings: ${settings}"
-
 	initialize()
 }
 
 def updated() {
-	log.debug "Updated with settings: ${settings}"
-
 	unsubscribe()
 	initialize()
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
+	subscribe(myswitch, "switch", switchHandler, [filterEvents: false])
 }
 
-// TODO: implement event handlers
+def switchHandler(evt) {
+	if(evt.isStateChange()) {
+		if(evt.value == "on") {
+			mypresence.arrived()
+		} else if(evt.value == "off") {
+			mypresence.departed()
+		}
+	}
+}
