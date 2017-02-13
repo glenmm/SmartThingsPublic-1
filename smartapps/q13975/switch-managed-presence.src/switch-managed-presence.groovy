@@ -25,7 +25,7 @@ definition(
 )
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-9-2017" }
+def appVerDate() { "2-13-2017" }
 
 preferences {
 	section("Use this switch") {
@@ -54,7 +54,7 @@ def switchHandler(evt) {
 		if(evt.value == "on") {
 			myPresence.arrived()
 		} else if(evt.value == "off") {
-			mypresence.departed()
+			myPresence.departed()
 		}
 	}
 }
