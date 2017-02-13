@@ -29,7 +29,7 @@ def appVerDate() { "2-13-2017" }
 
 preferences {
 	section("Use this switch") {
-		input name: "mySwitch", type: "capability.switch", title: "Select a switch?", required: true
+		input name: "mySwitch", type: "capability.switch", title: "Select a switch?", required: true, multiple: true
 	}
 	section("to manage this presence") {
 		input name: "myPresence", type: "capability.presenceSensor", title: "Select a presence?", required: true
