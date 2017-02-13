@@ -29,10 +29,10 @@ def appVerDate() { "2-9-2017" }
 
 preferences {
 	section("Use this switch") {
-		input name: "myswitch", type: "capability.switch", title: "Select a switch?", required: true
+		input name: "mySwitch", type: "capability.switch", title: "Select a switch?", required: true
 	}
 	section("to manage this presence") {
-		input name: "mypresence", type: "capability.presenceSensor", title: "Select a presence?", required: true
+		input name: "myPresence", type: "capability.presenceSensor", title: "Select a presence?", required: true
 	}
 }
 
@@ -46,13 +46,13 @@ def updated() {
 }
 
 def initialize() {
-	subscribe(myswitch, "switch", switchHandler, [filterEvents: false])
+	subscribe(mySwitch, "switch", switchHandler, [filterEvents: false])
 }
 
 def switchHandler(evt) {
 	if(evt.isStateChange()) {
 		if(evt.value == "on") {
-			mypresence.arrived()
+			myPresence.arrived()
 		} else if(evt.value == "off") {
 			mypresence.departed()
 		}
