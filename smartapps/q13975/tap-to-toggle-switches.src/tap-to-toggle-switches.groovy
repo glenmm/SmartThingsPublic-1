@@ -14,7 +14,7 @@
  *
  */
 definition(
-    name: "Tap to toggle switches",
+    name: "Double tap to toggle switches",
     namespace: "q13975",
     author: "Mike Wang",
     description: "Double tap a switch to toggle other switches",
@@ -32,9 +32,6 @@ preferences {
 	}
 	section("to toggle switches") {
 		input name: "slaves", type: "capability.switch", title: "Slave Switch?", required: true, multiple: true
-	}
-	section("It will toggle the majority switches if some are on or off") {
-		input name: "tmode", type: "bool", title: "Or it will toggle every switch if checked", required: true, defaultValue: false
 	}
 }
 
@@ -61,29 +58,17 @@ def switchHandler(evt) {
 			state.nextTime = eventTime + 5000
 		} else {				// second tap
 			state.nextTime = 0	
-			toggleSwitches(tmode)
+			toggleSwitches()
 		}
 	} else if(state.nextTime) {
 		state.nextTime = 0	
 	}
 }
 
-private toggleSwitches(tm) {
-	def onSwitches = []
-	def offSwitches = []
-	slaves?.each {	
-		if(it.currentSwitch == "on") {
-			onSwitches << it
-		} else {
-			offSwitches << it
-		}
-	}
-	if(tm) {
-		onSwitches?.each { it.off() }
-		offSwitches?.each { it.on() }
-	} else if(onSwitches?.size() >= offSwitches?.size()) {
-		onSwitches?.each { it.off() }
+private toggleSwitches() {
+	if(slaves.currentSwitch.contains("on")) {
+		slaves.off()
 	} else {
-		offSwitches?.each { it.on() }
-	}	
+		slaves.on()
+	}
 }
