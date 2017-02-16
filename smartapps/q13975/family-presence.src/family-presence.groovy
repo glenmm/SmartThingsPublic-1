@@ -37,6 +37,9 @@ preferences {
 	section("When family members are not present") {
 		input name: "familyMember", type: "capability.presenceSensor", title: "presence sensor", multiple: true, required: false
 	} 
+	section("Not in mode") {
+		input name: "excludeMode", type: "mode", title: "select mode(s)", multiple: true, required: false
+	}
 }
 
 def installed() {
@@ -53,9 +56,11 @@ def initialize() {
 }
 
 def residentMotionHandler(evt) {
-	if(!familyMember?.currentPresence.contains("present")) {
+	if(!excludeMode?.contains(location.mode) && !familyMember?.currentPresence.contains("present")) {
 		if(evt.value == "active" || residentMotion.currentMotion.contains("active")) {
-			familyResident.arrived()
+			if(familyResident.currentValue != "present" ) {
+				familyResident.arrived()
+			}
 		} else {
 			familyResident.departed()
 		}
