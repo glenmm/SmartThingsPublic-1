@@ -18,7 +18,7 @@ definition(
     namespace: "q13975",
     author: "Mike Wang",
     description: "Determine family presence ",
-    category: "Safety &amp; Security",
+    category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
@@ -53,7 +53,7 @@ def initialize() {
 }
 
 def residentMotionHandler(evt) {
-	if(!familyMember?.currentPresence.contains("present") {
+	if(!familyMember?.currentPresence.contains("present")) {
 		if(evt.value == "active" || residentMotion.currentMotion.contains("active")) {
 			familyResident.arrived()
 		} else {
