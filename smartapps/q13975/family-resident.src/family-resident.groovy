@@ -28,7 +28,7 @@ def appVersion() { "1.0.0" }
 def appVerDate() { "2-16-2017" }
 
 preferences {
-	section("Family resident presence") {
+	section("Family resident?") {
 		input name: "familyResident", type: "capability.presenceSensor", title: "presence sensor", required: true
 	} 
 	section("Sensors detecting presence") {
@@ -37,9 +37,6 @@ preferences {
 	section("When family members are not present") {
 		input name: "familyMember", type: "capability.presenceSensor", title: "presence sensor", multiple: true, required: false
 	} 
-	section("Not in mode") {
-		input name: "excludeMode", type: "mode", title: "select mode(s)", multiple: true, required: false
-	}
 }
 
 def installed() {
@@ -56,7 +53,7 @@ def initialize() {
 }
 
 def residentMotionHandler(evt) {
-	if(!excludeMode?.contains(location.mode) && !familyMember?.currentPresence.contains("present")) {
+	if(!familyMember?.currentPresence.contains("present")) {
 		if(evt.value == "active" || residentMotion.currentMotion.contains("active")) {
 			if(familyResident.currentValue != "present" ) {
 				familyResident.arrived()
