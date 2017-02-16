@@ -48,7 +48,7 @@ def updated() {
 }
 
 def initialize() {
-	state.nextTime = 0
+	atomicState.nextTime = 0
 	subscribe(master, "switch", switchHandler, [filterEvents: false])
 }
 
@@ -56,15 +56,15 @@ def switchHandler(evt) {
 	if(evt.isPhysical() && (evt.value == "on" || evt.value == "off")) {
 		if(!evt.isStateChange()) {
 			def eventTime = evt.date.getTime()
-			if(state.nextTime < eventTime) {	// first tap
+			if(atomicState.nextTime < eventTime) {	// first tap
 				// set time fence for second tap
-				state.nextTime = eventTime + 5000
+				atomicState.nextTime = eventTime + 5000
 			} else {				// second tap
+				atomicState.nextTime = 0	
 				toggleSwitches(tmode)
-				state.nextTime = 0	
 			}
-		} else if(state.nextTime) {
-			state.nextTime = 0	
+		} else if(atomicState.nextTime) {
+			atomicState.nextTime = 0	
 		}
 	}
 }
