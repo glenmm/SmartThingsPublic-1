@@ -33,9 +33,6 @@ preferences {
 	section("to toggle this switch") {
 		input name: "slaves", type: "capability.switch", title: "Slave Switch?", required: true, multiple: true
 	}
-	section("within certain time") {
-		input name: "tm", type: "number", title: "in seconds?", required: true, defaultValue: 5
-	}
 	section("by default, it will toggle the majority switches") {
 		input name: "tmode", type: "bool", title: "Or it will toggle every switch if checked", required: true, defaultValue: false
     }
@@ -52,22 +49,21 @@ def updated() {
 
 def initialize() {
 	state.nextTime = 0
-	subscribe(master, "switch", switchHandler, [filterEvents: false])
+	subscribe(master, "switch.on", switchHandler, [filterEvents: false])
+	subscribe(master, "switch.off", switchHandler, [filterEvents: false])
 }
 
 def switchHandler(evt) {
-	if(evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
-		def eventTime = evt.date.getTime()
-		if(state.nextTime > eventTime) {
-			toggleSwitches(tmode)
-			state.nextTime = 0
-		} else {
-			state.nextTime = eventTime + tm * 1000
-		}
+	def eventTime = evt.date.getTime()
+	if(state.nextTime > eventTime) {
+		state.nextTime = 0
+		toggleSwitches(tmode)
+	} else {
+		state.nextTime = eventTime + 5000
 	}
 }
 
-private toggleSwitches(tm) {
+private toggleSwitches(tmode) {
 	def onSwitches = []
 	def offSwitches = []
 	slaves?.each {	
@@ -77,7 +73,7 @@ private toggleSwitches(tm) {
 			offSwitches << it
 		}
 	}
-	if(tm) {
+	if(tmode) {
 		onSwitches?.each { it.off() }
 		offSwitches?.each { it.on() }
 	} else if(onSwitches?.size() >= offSwitches?.size()) {

@@ -21,30 +21,43 @@ definition(
     category: "Safety &amp; Security",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
-    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
+    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
+)
 
+def appVersion() { "1.0.0" }
+def appVerDate() { "2-16-2017" }
 
 preferences {
-	section("Title") {
-		// TODO: put inputs here
+	section("Family resident presence") {
+		input name: "familyResident", type: "capability.presenceSensor", title: "presence sensor", required: true
+	} 
+	section("Sensors detecting presence") {
+		input name: "residentMotion", type: "capability.motionSensor", title: "motion sensors", multiple: true, required: true
 	}
+	section("When family members are not present") {
+		input name: "familyMember", type: "capability.presenceSensor", title: "presence sensor", multiple: true, required: false
+	} 
 }
 
 def installed() {
-	log.debug "Installed with settings: ${settings}"
-
 	initialize()
 }
 
 def updated() {
-	log.debug "Updated with settings: ${settings}"
-
 	unsubscribe()
 	initialize()
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
+	subscribe(residentMotion, "motion", residentMotionHandler)
 }
 
-// TODO: implement event handlers
+def residentMotionHandler(evt) {
+	if(!familyMember?.currentPresence.contains("present") {
+		if(evt.value == "active" || residentMotion.currentMotion.contains("active")) {
+			familyResident.arrived()
+		} else {
+			familyResident.departed()
+		}
+	}
+}
