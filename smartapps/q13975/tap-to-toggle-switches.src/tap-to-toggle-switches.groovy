@@ -14,7 +14,7 @@
  *
  */
 definition(
-    name: "Double tap to toggle switches",
+    name: "Tap to toggle switches",
     namespace: "q13975",
     author: "Mike Wang",
     description: "Double tap a switch to toggle other switches",

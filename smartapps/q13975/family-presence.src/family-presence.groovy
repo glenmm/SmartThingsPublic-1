@@ -1,5 +1,5 @@
 /**
- *  family presence
+ *  Family residence presence
  *
  *  Copyright 2017 Mike Wang
  *
