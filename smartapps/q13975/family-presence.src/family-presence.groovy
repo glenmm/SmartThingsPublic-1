@@ -14,10 +14,10 @@
  *
  */
 definition(
-    name: "family presence",
+    name: "Family resident presence",
     namespace: "q13975",
     author: "Mike Wang",
-    description: "Determine family presence ",
+    description: "Determine family resident present",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
@@ -28,14 +28,14 @@ def appVersion() { "1.0.0" }
 def appVerDate() { "2-16-2017" }
 
 preferences {
-	section("Family resident?") {
+	section("Family resident home?") {
 		input name: "familyResident", type: "capability.presenceSensor", title: "presence sensor", required: true
 	} 
-	section("Sensors detecting presence") {
+	section("When sensors detecting motions") {
 		input name: "residentMotion", type: "capability.motionSensor", title: "motion sensors", multiple: true, required: true
 	}
-	section("When family members are not present") {
-		input name: "familyMember", type: "capability.presenceSensor", title: "presence sensor", multiple: true, required: false
+	section("And optionally") {
+		input name: "familyMember", type: "capability.presenceSensor", title: "when these family members are not home", multiple: true, required: false
 	} 
 }
 
