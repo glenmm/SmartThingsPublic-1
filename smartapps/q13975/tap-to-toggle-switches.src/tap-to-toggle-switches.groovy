@@ -24,7 +24,7 @@ definition(
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-10-2017" }
+def appVerDate() { "2-16-2017" }
 
 preferences {
 	section("Double Tap this switch") {
@@ -58,13 +58,13 @@ def switchHandler(evt) {
 private wasDoubleTapped(evt) {
 	def result = false
 	if(!evt.isStateChange() && evt.isPhysical() && (evt.value == "on" || evt.value == "off")) {
-    	def lastTime = evt.date.getTime() - 5000
-        def lastDate = lastTime > state.lastTime ? new Date(lastTime) : new Date(state.lastTime)
+		def lastTime = evt.date.getTime() - 5000
+		def lastDate = lastTime > state.lastTime ? new Date(lastTime) : new Date(state.lastTime)
 		def recentStates = master.events([all:true, max:10]).findAll{ it.isPhysical() && (it.value == "on" || it.value == "off") && !it.date.after(evt.date) && it.date.after(lastDate) }
-        if(recentStates?.size() > 1 && !recentStates[0].isStateChange() && !recentStates[1].isStateChange() && recentStates[0].value == recentStates[1].value) {
-        		result = true
-                state.lastTime = evt.date.getTime()
-        }
+		if(recentStates?.size() > 1 && !recentStates[0].isStateChange() && !recentStates[1].isStateChange() && recentStates[0].value == recentStates[1].value) {
+			result = true
+			state.lastTime = evt.date.getTime()
+		}
 	}
 	result
 }
