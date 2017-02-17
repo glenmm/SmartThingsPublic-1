@@ -60,7 +60,7 @@ private wasDoubleTapped(evt) {
 	if(!evt.isStateChange() && evt.isPhysical() && (evt.value == "on" || evt.value == "off")) {
 		def lastTime = evt.date.getTime() - 5000
 		def lastDate = lastTime > state.lastTime ? new Date(lastTime) : new Date(state.lastTime)
-		def recentStates = master.events([all:true, max:10]).findAll{ it.isPhysical() && (it.value == "on" || it.value == "off") && !it.date.after(evt.date) && it.date.after(lastDate) }
+		def recentStates = master.events([all:true, max:10]).findAll{ it.isPhysical() && it.name == "switch" && (it.value == "on" || it.value == "off") && !it.date.after(evt.date) && it.date.after(lastDate) }
 		if(recentStates?.size() > 1 && !recentStates[0].isStateChange() && !recentStates[1].isStateChange() && recentStates[0].value == recentStates[1].value) {
 			result = true
 			state.lastTime = evt.date.getTime()

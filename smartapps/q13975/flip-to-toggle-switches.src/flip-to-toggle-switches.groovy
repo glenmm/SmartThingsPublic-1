@@ -60,8 +60,8 @@ private wasFlipped(evt) {
 	if(evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
 		def lastTime = evt.date.getTime() - 5000	
 		def lastDate = lastTime > state.lastTime ? new Date(lastTime) : new Date(state.lastTime)
-		def recentStates = master.events([all:true, max:10]).findAll{ (it.value == "on" || it.value == "off") && it.date.after(lastDate) && !it.date.after(evt.date) }
-		if(recentStates?.size() > 1 && recentStates[0].isStateChange() && recentStates[1].isStateChange() && recentStates[0].value == recentStates[1].value) {
+		def recentStates = master.events([all:true, max:10]).findAll{ it.name == "switch" && (it.value == "on" || it.value == "off") && it.date.after(lastDate) && !it.date.after(evt.date) }
+		if(recentStates?.size() > 1 && recentStates[0].isStateChange() && recentStates[1].isStateChange() && recentStates[0].value != recentStates[1].value) {
 			result = true
 			state.lastTime = evt.date.getTime()
 		}
