@@ -1,5 +1,5 @@
 /**
- *  flip to toggle a switch
+ *  Flip to toggle switches
  *
  *  Copyright 2017 Mike Wang
  *
@@ -14,7 +14,7 @@
  *
  */
 definition(
-    name: "flip to toggle a switch",
+    name: "Flip to toggle switches",
     namespace: "q13975",
     author: "Mike Wang",
     description: "Flip a switch to toggle another switch",
@@ -24,18 +24,15 @@ definition(
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-10-2017" }
+def appVerDate() { "2-17-2017" }
 
 preferences {
 	section("Flip this switch") {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
-	section("to toggle this switch") {
+	section("to toggle these switch") {
 		input name: "slaves", type: "capability.switch", title: "Slave Switch?", required: true, multiple: true
 	}
-	section("by default, it will toggle the majority switches") {
-		input name: "tmode", type: "bool", title: "Or it will toggle every switch if checked", required: true, defaultValue: false
-    }
 }
 
 def installed() {
@@ -48,37 +45,34 @@ def updated() {
 }
 
 def initialize() {
-	state.nextTime = 0
-	subscribe(master, "switch.on", switchHandler, [filterEvents: false])
-	subscribe(master, "switch.off", switchHandler, [filterEvents: false])
+	state.lastTime = 0
+	subscribe(master, "switch", switchHandler, [filterEvents: false])
 }
 
 def switchHandler(evt) {
-	def eventTime = evt.date.getTime()
-	if(state.nextTime > eventTime) {
-		state.nextTime = 0
-		toggleSwitches(tmode)
-	} else {
-		state.nextTime = eventTime + 5000
+	if(wasFlipped(evt)) {
+		toggleSwitches()
 	}
 }
 
-private toggleSwitches(tmode) {
-	def onSwitches = []
-	def offSwitches = []
-	slaves?.each {	
-		if(it.currentSwitch == "on") {
-			onSwitches << it
-		} else {
-			offSwitches << it
+private wasFlipped(evt) {
+	def result = false
+	if(evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
+		def lastTime = evt.date.getTime() - 5000	
+		def lastDate = lastTime > state.lastTime ? new Date(lastTime) : new Date(state.lastTime)
+		def recentStates = master.events([all:true, max:10]).findAll{ (it.value == "on" || it.value == "off") && it.date.after(lastDate) && !it.date.after(evt.date) }
+		if(recentStates?.size() > 1 && recentStates[0].isStateChange() && recentStates[1].isStateChange() && recentStates[0].value == recentStates[1].value) {
+			result = true
+			state.lastTime = evt.date.getTime()
 		}
 	}
-	if(tmode) {
-		onSwitches?.each { it.off() }
-		offSwitches?.each { it.on() }
-	} else if(onSwitches?.size() >= offSwitches?.size()) {
-		onSwitches?.each { it.off() }
+	result
+}
+
+private toggleSwitches() {
+	if(slaves.currentSwitch.contains("on")) {
+		slaves.off()
 	} else {
-		offSwitches?.each { it.on() }
+		slaves.on()
 	}	
 }
