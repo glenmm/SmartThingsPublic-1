@@ -45,32 +45,29 @@ def updated() {
 }
 
 def initialize() {
-	state.nextTime = 0
+	state.lastTime = 0
 	subscribe(master, "switch", switchHandler, [filterEvents: false])
 }
 
 def switchHandler(evt) {
-	if(wasDoubleTap(evt)) {
+	if(wasDoubleTapped(evt)) {
 		toggleSwitches()
 	}
 }
 
-/*
-def switchHandler(evt) {
-	if(!evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
-		def eventTime = evt.date.getTime()
-		if(state.nextTime < eventTime) {	// first tap
-			// set time fence for second tap
-			state.nextTime = eventTime + 5000
-		} else {				// second tap
-			state.nextTime = 0	
-			toggleSwitches()
-		}
-	} else if(state.nextTime) {
-		state.nextTime = 0	
+private wasDoubleTapped(evt) {
+	def result = false
+	if(!evt.isStateChange() && evt.isPhysical() && (evt.value == "on" || evt.value == "off")) {
+    	def lastTime = evt.date.getTime() - 5000
+        def lastDate = lastTime > state.lastTime ? new Date(lastTime) : new Date(state.lastTime)
+		def recentStates = master.events([all:true, max:10]).findAll{ it.isPhysical() && (it.value == "on" || it.value == "off") && !it.date.after(evt.date) && it.date.after(lastDate) }
+        if(recentStates?.size() > 1 && !recentStates[0].isStateChange() && !recentStates[1].isStateChange() && recentStates[0].value == recentStates[1].value) {
+        		result = true
+                state.lastTime = evt.date.getTime()
+        }
 	}
+	result
 }
-*/
 
 private toggleSwitches() {
 	if(slaves.currentSwitch.contains("on")) {
@@ -78,26 +75,4 @@ private toggleSwitches() {
 	} else {
 		slaves.on()
 	}
-}
-
-private wasDoubleTap(evt) {
-	def result = false
-	if(!evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
-		def recentStates = master.eventsSince(new Date(evt.date.getTime() - 5000), [all:true, max:10]).findAll{it.name == "switch" && it.isPhysical()}
-		eventFound = false
-		recentStates?.each {
-			if(eventFound) {
-				if(evt.value == it.value && !it.isStateChange()) {
-					result = true
-				} else {
-					break
-				}
-			} else {
-				if(evt.date == it.date && evt.value = it.value && !it.isStateChange) {
-					eventFound = True
-				}
-			}
-		}
-	}
-	result
 }
