@@ -32,7 +32,7 @@ preferences {
 		input name: "mySwitch", type: "capability.switch", title: "Select a switch?", required: true, multiple: true
 	}
 	section("to manage this presence") {
-		input name: "myPresence", type: "capability.presenceSensor", title: "Select a presence?", required: true
+		input name: "myPresence", type: "capability.presenceSensor", title: "Select a simulated presence?", required: true
 	}
 }
 

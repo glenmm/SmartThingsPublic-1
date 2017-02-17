@@ -1,5 +1,5 @@
 /**
- *  tap to toggle switches
+ *  Tap to toggle switches
  *
  *  Copyright 2017 Mike Wang
  *
