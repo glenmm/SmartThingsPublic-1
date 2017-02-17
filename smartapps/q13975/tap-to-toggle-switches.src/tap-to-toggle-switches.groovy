@@ -46,12 +46,18 @@ def updated() {
 
 def initialize() {
 	state.nextTime = 0
-	subscribe(master, "switch.on", switchHandler, [filterEvents: false])
-	subscribe(master, "switch.off", switchHandler, [filterEvents: false])
+	subscribe(master, "switch", switchHandler, [filterEvents: false])
 }
 
 def switchHandler(evt) {
-	if(!evt.isStateChange()) {
+	if(wasDoubleTap(evt)) {
+		toggleSwitches()
+	}
+}
+
+/*
+def switchHandler(evt) {
+	if(!evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
 		def eventTime = evt.date.getTime()
 		if(state.nextTime < eventTime) {	// first tap
 			// set time fence for second tap
@@ -64,6 +70,7 @@ def switchHandler(evt) {
 		state.nextTime = 0	
 	}
 }
+*/
 
 private toggleSwitches() {
 	if(slaves.currentSwitch.contains("on")) {
@@ -71,4 +78,26 @@ private toggleSwitches() {
 	} else {
 		slaves.on()
 	}
+}
+
+private wasDoubleTap(evt) {
+	def result = false
+	if(!evt.isStateChange() && (evt.value == "on" || evt.value == "off")) {
+		def recentStates = master.eventsSince(new Date(evt.date.getTime() - 5000), [all:true, max:10]).findAll{it.name == "switch" && it.isPhysical()}
+		eventFound = false
+		recentStates?.each {
+			if(eventFound) {
+				if(evt.value == it.value && !it.isStateChange()) {
+					result = true
+				} else {
+					break
+				}
+			} else {
+				if(evt.date == it.date && evt.value = it.value && !it.isStateChange) {
+					eventFound = True
+				}
+			}
+		}
+	}
+	result
 }
