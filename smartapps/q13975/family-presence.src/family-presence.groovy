@@ -1,5 +1,5 @@
 /**
- *  Family residence presence
+ *  Family presence
  *
  *  Copyright 2017 Mike Wang
  *
@@ -14,7 +14,7 @@
  *
  */
 definition(
-    name: "Family resident presence",
+    name: "Family presence",
     namespace: "q13975",
     author: "Mike Wang",
     description: "Determine family resident present",
@@ -59,7 +59,7 @@ def residentMotionHandler(evt) {
 				familyResident.arrived()
 			}
 		} else {
-			runIn(300, quietDown)
+			runIn(60, quietDown)
 		}
 	}
 }
