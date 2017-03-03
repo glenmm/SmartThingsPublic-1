@@ -82,7 +82,7 @@ def handlerMasterOff(evt) {
 // Handler when slave switch is turned on
 def handlerSlavesOn(evt) {
 	if(evt.isStateChange()) {
-		if(!masterOffAtAll || !slaves.contains("off")) {
+		if(masterOffAtAll || !slaves.currentSwitch.contains("off")) {
 			state.slaveTriggerOn = true
 			master.on()
 		}
@@ -92,7 +92,7 @@ def handlerSlavesOn(evt) {
 // Handler when slave switch is turned off
 def handlerSlavesOff(evt) {
 	if(evt.isStateChange()) {
-		if(!masterOffAtAll || slaves.contains("off")) {
+		if(!masterOffAtAll || !slaves.currentSwitch.contains("on")) {
 			state.slaveTriggerOff = true
 			master.off()
 		}
