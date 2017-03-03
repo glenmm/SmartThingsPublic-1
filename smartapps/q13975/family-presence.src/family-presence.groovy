@@ -61,6 +61,8 @@ def residentMotionHandler(evt) {
 		} else {
 			runIn(60, motionQuietDown)
 		}
+	} else if(familyResident.currentValue != "not present" ) {
+		familyResident.departed()
 	}
 }
 
