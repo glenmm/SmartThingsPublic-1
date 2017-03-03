@@ -59,12 +59,12 @@ def residentMotionHandler(evt) {
 				familyResident.arrived()
 			}
 		} else {
-			runIn(60, quietDown)
+			runIn(10, motionQuietDown)
 		}
 	}
 }
 
-private quietDown() {
+def motionQuietDown() {
 	if(!residentMotion.currentMotion.contains("active") && familyResident.currentValue != "not present" ) {
 		familyResident.departed()
 	}
