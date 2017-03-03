@@ -25,7 +25,7 @@ definition(
 )
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-16-2017" }
+def appVerDate() { "3-02-2017" }
 
 preferences {
 	section("Family resident home?") {
@@ -54,12 +54,18 @@ def initialize() {
 
 def residentMotionHandler(evt) {
 	if(!familyMember?.currentPresence.contains("present")) {
-		if(evt.value == "active" || residentMotion.currentMotion.contains("active")) {
+		if(evt.value == "active") {
 			if(familyResident.currentValue != "present" ) {
 				familyResident.arrived()
 			}
 		} else {
-			familyResident.departed()
+			runIn(300, quietDown)
 		}
+	}
+}
+
+private quietDown() {
+	if(!residentMotion.currentMotion.contains("active") && familyResident.currentValue != "not present" ) {
+		familyResident.departed()
 	}
 }
