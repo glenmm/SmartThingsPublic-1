@@ -59,7 +59,7 @@ def residentMotionHandler(evt) {
 				familyResident.arrived()
 			}
 		} else {
-			runIn(10, motionQuietDown)
+			runIn(60, motionQuietDown)
 		}
 	}
 }
