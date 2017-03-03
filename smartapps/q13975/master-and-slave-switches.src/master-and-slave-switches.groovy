@@ -82,8 +82,7 @@ def handlerMasterOff(evt) {
 // Handler when slave switch is turned on
 def handlerSlavesOn(evt) {
 	if(evt.isStateChange()) {
-		def onSwitches = getSwitchesByState(slaves, "on")
-		if(onSwitches?.size() == slaves.size()) {
+		if(!masterOffAtAll || !slaves.contains("off")) {
 			state.slaveTriggerOn = true
 			master.on()
 		}
@@ -93,19 +92,9 @@ def handlerSlavesOn(evt) {
 // Handler when slave switch is turned off
 def handlerSlavesOff(evt) {
 	if(evt.isStateChange()) {
-		def offSwitches = getSwitchesByState(slaves, "off")
-		if(!masterOffAtAll || offSwitches?.size() == slaves.size()) {
+		if(!masterOffAtAll || slaves.contains("off")) {
 			state.slaveTriggerOff = true
 			master.off()
 		}
 	}
 }
-
-// get a subset from a List of swithes by its state
-private getSwitchesByState(switches, st="off") {
-	st = st?.toLowerCase() == "on" ? "on" : "off"
-	def result = switches?.findAll { it ->
-		it.currentSwitch == st ? true : false
-	}
-}
-
