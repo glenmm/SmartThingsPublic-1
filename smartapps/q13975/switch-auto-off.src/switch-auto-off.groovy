@@ -25,8 +25,11 @@ definition(
 
 
 preferences {
-	section("Title") {
-		// TODO: put inputs here
+	section("Automatically turn off") {
+		input name: "theSwitch", type: "capability.switch", title: "these switches", required: true, multiple: true
+	}
+	section("in inSeconds") {
+		input name: "inSeconds", type: "number", title: "how much?", required: true, defaultValue: 3
 	}
 }
 
@@ -44,7 +47,9 @@ def updated() {
 }
 
 def initialize() {
-	// TODO: subscribe to attributes, devices, locations, etc.
+	subscribe(theSwitch, "switch.on", switchOnHandler)
 }
 
-// TODO: implement event handlers
+def switchOnHandler(evt) {
+	runIn(inSeconds, evt.device.off())
+}
