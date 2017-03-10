@@ -28,7 +28,7 @@ def appVerDate() { "3-10-2017" }
 
 preferences {
 	section("Automatically turn off") {
-		input name: "theSwitch", type: "capability.switch", title: "the switch", required: true 
+		input name: "theSwitches", type: "capability.switch", title: "the switches?", required: true 
 	}
 	section("after it's turned on") {
 		input name: "inSeconds", type: "number", title: "in seconds?", required: true, defaultValue: 3
@@ -45,11 +45,17 @@ def updated() {
 }
 
 def initialize() {
-	subscribe(theSwitch, "switch.on", switchOnHandler)
+	subscribe(theSwitches, "switch.on", switchOnHandler, [filterEvents: false])
 }
 
 def switchOnHandler(evt) {
-	if(evt.name == "switch" && evt.isStateChange()) {
-		runIn(inSeconds, evt.device.off())
+	if(evt.isStateChange()) {
+		runIn(inSeconds, turnOffSwitch(evt.device))
+	}
+}
+
+def turnOffSwitch(theSwitch) {
+	if(theSwitch) {
+		theSwitch.off()
 	}
 }
