@@ -50,6 +50,12 @@ def initialize() {
 
 def switchOnHandler(evt) {
 	if(evt.isStateChange()) {
-		runIn(inSeconds, evt.device.off)
+		runIn(inSeconds, turnOffSwitch, [theSwitch: evt.device])
+	}
+}
+
+def turnOffSwitch(theSwitch) {
+	if(theSwitch) {
+		theSwitch.off()
 	}
 }
