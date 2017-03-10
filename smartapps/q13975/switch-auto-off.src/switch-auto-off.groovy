@@ -23,25 +23,23 @@ definition(
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
+def appVersion() { "1.0.0" }
+def appVerDate() { "3-10-2017" }
 
 preferences {
 	section("Automatically turn off") {
 		input name: "theSwitch", type: "capability.switch", title: "these switches", required: true, multiple: true
 	}
-	section("in inSeconds") {
+	section("in seconds") {
 		input name: "inSeconds", type: "number", title: "how much?", required: true, defaultValue: 3
 	}
 }
 
 def installed() {
-	log.debug "Installed with settings: ${settings}"
-
 	initialize()
 }
 
 def updated() {
-	log.debug "Updated with settings: ${settings}"
-
 	unsubscribe()
 	initialize()
 }
@@ -51,5 +49,7 @@ def initialize() {
 }
 
 def switchOnHandler(evt) {
-	runIn(inSeconds, evt.device.off())
+	if(evt.device) {
+		runIn(inSeconds, evt.device.off())
+	}
 }
