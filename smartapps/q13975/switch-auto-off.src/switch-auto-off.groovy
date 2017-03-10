@@ -49,7 +49,7 @@ def initialize() {
 }
 
 def switchOnHandler(evt) {
-	if(evt.device) {
+	if(evt.isStateChange()) {
 		runIn(inSeconds, evt.device.off())
 	}
 }
