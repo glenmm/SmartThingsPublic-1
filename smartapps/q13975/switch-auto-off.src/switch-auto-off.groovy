@@ -17,7 +17,7 @@ definition(
     name: "Switch auto off",
     namespace: "q13975",
     author: "Mike Wang",
-    description: "Turn off a switch automatically when it&#39;s turned on in certain time",
+    description: "Turn off a switch automatically when it is turned on in certain time",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
