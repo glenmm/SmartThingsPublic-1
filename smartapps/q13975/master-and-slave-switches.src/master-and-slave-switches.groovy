@@ -26,17 +26,14 @@ definition(
 )
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "2-6-2017" }
+def appVerDate() { "3-19-2017" }
 
 preferences {
-	section("Define a master switch") {
+	section("Define master switch") {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
 	section("Define slave switches") {
 		input name: "slaves", type: "capability.switch", title: "Slave Switches?", multiple: true, required: true
-	}
-	section("Master switch will be off if any slaves are off") {
-		input name: "masterOffAtAll", type: "bool", title: "or until all slaves are off if checked", required: true, defaultValue: false
 	}
 }
 
@@ -73,18 +70,14 @@ def handlerMasterOff(evt) {
 
 // Handler when slave switch is turned on
 def handlerSlavesOn(evt) {
-	if(evt.isStateChange() && master.currentSwitch != "on") {
-		if(masterOffAtAll || !slaves.currentSwitch.contains("off")) {
-			master.on()
-		}
+	if(evt.isStateChange() && master.currentSwitch != "on" && !slaves.currentSwitch.contains("off")) {
+		master.on()
 	}
 }
 
 // Handler when slave switch is turned off
 def handlerSlavesOff(evt) {
-	if(evt.isStateChange() && master.currentSwitch != "off") {
-		if(!masterOffAtAll || !slaves.currentSwitch.contains("on")) {
-			master.off()
-		}
+	if(evt.isStateChange() && master.currentSwitch != "off" && !slaves.currentSwitch.contains("on")) {
+		master.off()
 	}
 }
