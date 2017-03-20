@@ -24,7 +24,7 @@ definition(
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "3-10-2017" }
+def appVerDate() { "3-19-2017" }
 
 preferences {
 	section("Automatically turn off") {
@@ -49,9 +49,7 @@ def initialize() {
 }
 
 def switchOnHandler(evt) {
-	if(evt.isStateChange()) {
-		runIn(inSeconds, turnOffSwitch)
-	}
+	runIn(inSeconds, turnOffSwitch)
 }
 
 def turnOffSwitch() {
