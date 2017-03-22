@@ -32,7 +32,7 @@ preferences {
 	section("Define master switch") {
 		input name: "master", type: "capability.switch", title: "Master Switch?", required: true
 	}
-	section("Define slave switches") {
+	section("to manage slave switches") {
 		input name: "slaves", type: "capability.switch", title: "Slave Switches?", multiple: true, required: true
 	}
 }

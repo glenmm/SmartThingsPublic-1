@@ -25,17 +25,17 @@ definition(
 )
 
 def appVersion() { "1.0.0" }
-def appVerDate() { "3-02-2017" }
+def appVerDate() { "3-21-2017" }
 
 preferences {
-	section("Family resident home?") {
-		input name: "familyResident", type: "capability.presenceSensor", title: "presence sensor", required: true
+	section("Affiliated family resident") {
+		input name: "affiliateResident", type: "capability.presenceSensor", title: "affiliated presence sensor", required: true
 	} 
 	section("When sensors detecting motions") {
 		input name: "residentMotion", type: "capability.motionSensor", title: "motion sensors", multiple: true, required: true
 	}
-	section("And optionally") {
-		input name: "familyMember", type: "capability.presenceSensor", title: "when these family members are not home", multiple: true, required: false
+	section("And optionally when master residents are not home") {
+		input name: "masterResident", type: "capability.presenceSensor", title: "master presence sensors", multiple: true, required: false
 	} 
 }
 
@@ -53,21 +53,16 @@ def initialize() {
 }
 
 def residentMotionHandler(evt) {
-	if(!familyMember?.currentPresence.contains("present")) {
+	if(!masterResident?.currentPresence.contains("present")) {
 		if(evt.value == "active") {
-			if(familyResident.currentValue != "present" ) {
-				familyResident.arrived()
+			if(affiliateResident.currentValue != "present" ) {
+				affiliateResident.arrived()
 			}
-		} else {
-			runIn(60, motionQuietDown)
+		} else if(!residentMotion.currentMotion.contains("active") && affiliateResident.currentValue != "not present" ) {
+			affiliateResident.departed()
 		}
-	} else if(familyResident.currentValue != "not present" ) {
-		familyResident.departed()
+	} else if(affiliateResident.currentValue != "not present" ) {
+		affiliateResident.departed()
 	}
 }
 
-def motionQuietDown() {
-	if(!residentMotion.currentMotion.contains("active") && familyResident.currentValue != "not present" ) {
-		familyResident.departed()
-	}
-}
